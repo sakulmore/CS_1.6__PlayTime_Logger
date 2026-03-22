@@ -2,7 +2,7 @@
 #include <amxmisc>
 
 #define PLUGIN_NAME     "PlayTime Logger"
-#define PLUGIN_VERSION  "1.0"
+#define PLUGIN_VERSION  "1.1"
 #define PLUGIN_AUTHOR   "sakulmore"
 
 #define ADMIN_FLAG      ADMIN_RCON
@@ -29,6 +29,8 @@ public plugin_init() {
     register_clcmd("say_team /rpt", "Cmd_ResetFile")
     register_concmd("playtime_resetfile", "Cmd_ResetFile")
     register_srvcmd("playtime_resetfile", "Cmd_ResetFile_Server")
+    
+    register_concmd("playtime_resetplayer", "Cmd_ResetPlayer")
     
     register_event("TeamInfo", "Event_TeamInfo", "a")
     
@@ -205,6 +207,39 @@ public Cmd_ResetFile(id) {
 
 public Cmd_ResetFile_Server() {
     ClearData(0)
+    return PLUGIN_HANDLED
+}
+
+public Cmd_ResetPlayer(id) {
+    if (id != 0 && !(get_user_flags(id) & ADMIN_FLAG)) {
+        console_print(id, "[PlayTime Logger] You do not have access to this command.")
+        return PLUGIN_HANDLED
+    }
+    
+    new szSteamID[32]
+    read_argv(1, szSteamID, charsmax(szSteamID))
+    
+    if (!szSteamID[0]) {
+        console_print(id, "[PlayTime Logger] Usage: playtime_resetplayer %cSTEAM_X:X:XXXXXXX%c", 34, 34)
+        return PLUGIN_HANDLED
+    }
+    
+    new data[PlayerData]
+    if (TrieGetArray(g_tPlayerData, szSteamID, data, PlayerData)) {
+        data[pd_iTotalSeconds] = 0
+        TrieSetArray(g_tPlayerData, szSteamID, data, PlayerData)
+        
+        new target = find_player("c", szSteamID)
+        if (target) {
+            g_iJoinTime[target] = get_systime()
+        }
+        
+        SaveData()
+        console_print(id, "[PlayTime Logger] PlayTime for %c%s%c has been successfully reset.", 34, szSteamID, 34)
+    } else {
+        console_print(id, "[PlayTime Logger] The specified SteamID was not found in the file.")
+    }
+    
     return PLUGIN_HANDLED
 }
 

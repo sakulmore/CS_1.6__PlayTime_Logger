@@ -14,6 +14,7 @@ With this plugin, you can log players' playtime on the server without the need f
 | /rtp | Chat | - | ADMIN_RCON | Deletes the contents of the "playtime_logger.txt" file (and thus also deletes the record of players' playtime). |
 | playtime_resetfile | Console | - | ADMIN_RCON | Deletes the contents of the "playtime_logger.txt" file (and thus also deletes the record of players' playtime). |
 | playtime_allowspectator | Console | 1, 0 | ADMIN_RCON | Enables or disables logging of player time when the player is in Spectator mode. |
+| playtime_resetplayer | Console | SteamID | ADMIN_RCON | Resets PlayTime for a specific player only. |
 
 # Showcases
 To be added later...
